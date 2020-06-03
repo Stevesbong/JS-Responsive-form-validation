@@ -136,6 +136,36 @@ option {
 	max-width: 680px;
 }
 
+fieldset {
+	position: relative;
+}
+
+.basic-info-error {
+	position: absolute;
+	display: none;
+	top: 45%;
+	left: 110%;
+	padding: 10px 15px;
+	transform: translateY(-45%);
+	background: #2F558E;
+	color: #fff;
+	width: 25%;
+	box-shadow: black 3px 4px 5px;
+}
+.basic-info-error:after {
+	right: 100%;
+	top: 50%;
+	border: solid transparent;
+	content: " ";
+	height:0;
+	width: 0;
+	position: absolute;
+	border-color: rgba(136, 183, 213, 0);
+	border-right-color: #2F558E;
+	border-width: 8px;
+	margin-top: -8px;
+}
+
 .shirt div {
 	float: left;
 	margin-right: .85em;

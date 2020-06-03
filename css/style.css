@@ -143,14 +143,14 @@ fieldset {
 .basic-info-error {
 	position: absolute;
 	display: none;
-	top: 45%;
+	top: 35%;
 	left: 110%;
 	padding: 10px 15px;
-	transform: translateY(-45%);
 	background: #2F558E;
 	color: #fff;
 	width: 25%;
 	box-shadow: black 3px 4px 5px;
+	transform: rotate(-10deg);
 }
 .basic-info-error:after {
 	right: 100%;

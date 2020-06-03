@@ -177,7 +177,7 @@ const expYear = document.getElementById('exp-year');
 // $           # Assert position at the end of the string.
 // MIDDLE NAME IS NOT GOING TO WORK
 const nameRegex = /^([A-Z]+)?([a-z]+)?(\s)?([A-Z]+)?([a-z]+)?$/;
-const emailRegex = /^[^@]+@[^@.]+\.[a-z]+$/i
+const emailRegex = /^[^@]+@[^@.]+\.[a-z]+$/i;
 const activities = document.querySelectorAll('input[type="checkbox"]');
 // 16 length
 const visa = new RegExp("^4[0-9]{12}(?:[0-9]{3})?$");
@@ -193,71 +193,120 @@ const zipcodeRegex = new RegExp("^[0-9]{5}(?:-[0-9]{4})?$");
 const cvvRegex = new RegExp("^[0-9]{3}$");
 
 
-// NAME, EMAIL VALIDATION HELPER FUNCTION
-function basicInfo() {
-    const name = document.getElementById('name');
-    const email = document.getElementById('mail');
-    const p = document.createElement('p');
-    const fieldset = document.getElementsByTagName('fieldset')[0];
-    // p.style.display = 'none'
-    p.className = 'basic-info-error'
-    p.style.display = 'none'
-    fieldset.appendChild(p)
-    
+//                          TEST SECTION
 
-    name.addEventListener('input', e => {
-        if(e.target.value === '') {
-    
-            e.target.style.borderColor = 'red'
-            p.style.display = 'inherit'
-            p.innerHTML = "name cannot be empty"
-    
-        } else {
-            e.target.style.borderColor = ''
-            p.style.display = ""
-            if(!nameRegex.test(e.target.value)) {
-                p.style.display = 'inherit'
-                p.innerHTML = "name is invalid"
-            }
-            p.style.display = 'none'
-        }
-    })
+const name = document.getElementById('name');
+const email = document.getElementById('email');
+const p = document.createElement('p');
+const fieldset = document.getElementsByTagName('fieldset')[0];
+p.className = 'basic-info-error'
+p.style.display = 'none'
+fieldset.appendChild(p)
 
-    email.addEventListener('input', e => {
-        if(email.value === '') {
-
-            email.style.borderColor = 'red'
-            p.style.display = 'inherit'
-            p.innerHTML = "email cannot be empty"
-    
-        } else {
-            e.target.style.borderColor = ''
-            p.style.display = ""
-            if(!emailRegex.test(email.value)) {
-                email.style.borderColor = 'red'
-                p.style.display = 'inherit'
-                p.innerHTML = "email is invalid"
-            }
-        }
-    })
-    
-    
-
-    // if(email.value === '' && name.value === '') {
-    //     p.style.display = 'inherit'
-    //     p.innerHTML = "Name and Email should not be empty."
-    // }
-
-    if(otherType.style.display !== 'none') {
-        //get other type value
-        console.log(otherType.value)
+function isValidName(name) {
+    return /^([A-Z]+)?([a-z]+)?(\s)?([A-Z]+)?([a-z]+)?$/.test(name);
+}
+function isValidEmail(email) {
+    return /^[^@]+@[^@.]+\.[a-z]+$/i.test(email);
+}
+function displayError(show, element, input) {
+    if(show) {
+        element.style.display = 'inherit';
+        input.style.borderColor = 'red';
+        element.innerText = `${input.getAttribute('id')} is invalid`;
+    } else {
+        element.style.display = 'none';
+        input.style.borderColor = '';
     }
 }
-basicInfo()
+
+function validListener(validator) {
+    return e => {
+        const text = e.target.value;
+        const valid = validator(text);
+        console.log(valid, 'valid');
+        const showTip = text !== "" && !valid;
+        console.log(showTip);
+        const toolTip = p;
+        displayError(showTip, toolTip, e.target);
+    }
+}
+
+name.addEventListener('input', validListener(isValidName))
+email.addEventListener('input', validListener(isValidEmail))
+// function createListener(validator) {
+//     return e => {
+//       const text = e.target.value;
+//       const valid = validator(text);
+//       const showTip = text !== "" && !valid;
+//       const tooltip = e.target.nextElementSibling;
+//       showOrHideTip(showTip, tooltip);
+//     };
+//   }
+
+
+
+//                          TEST SECTION END
+
+// NAME, EMAIL VALIDATION HELPER FUNCTION
+// function basicInfo() {
+//     const name = document.getElementById('name');
+//     const email = document.getElementById('mail');
+//     const p = document.createElement('p');
+//     const fieldset = document.getElementsByTagName('fieldset')[0];
+//     // p.style.display = 'none'
+//     p.className = 'basic-info-error'
+//     p.style.display = 'none'
+//     fieldset.appendChild(p)
+    
+
+//     name.addEventListener('input', e => {
+//         if(e.target.value === '') {
+    
+//             e.target.style.borderColor = 'red'
+//             p.style.display = 'inherit'
+//             p.innerHTML = "name cannot be empty"
+    
+//         } else {
+//             e.target.style.borderColor = ''
+//             p.style.display = ""
+//             if(!nameRegex.test(e.target.value)) {
+//                 p.style.display = 'inherit'
+//                 p.innerHTML = "name is invalid"
+//             }
+//             p.style.display = 'none'
+//         }
+//     })
+
+//     email.addEventListener('input', e => {
+//         if(email.value === '') {
+
+//             email.style.borderColor = 'red'
+//             p.style.display = 'inherit'
+//             p.innerHTML = "email cannot be empty"
+    
+//         } else {
+//             e.target.style.borderColor = ''
+//             p.style.display = ""
+//             if(!emailRegex.test(email.value)) {
+//                 email.style.borderColor = 'red'
+//                 p.style.display = 'inherit'
+//                 p.innerHTML = "email is invalid"
+//             }
+//         }
+//     })
+
+//     if(otherType.style.display !== 'none') {
+//         //get other type value
+//         console.log(otherType.value)
+//     }
+// }
+
+
+// basicInfo()
 // console.dir(activities)
 form.addEventListener('submit', e => {
     // console.log(e.target)
-    basicInfo()
     if(design.value === "js puns" || design.value === "heart js") {
         if(colors.value !== colors.options[0].value) {
             console.log(colors.value)

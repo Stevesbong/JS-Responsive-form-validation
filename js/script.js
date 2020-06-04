@@ -263,19 +263,34 @@ card.addEventListener('input', validListener(isValidCardNumber));
 zipcode.addEventListener('input', validListener(isValidZipcode));
 cvv.addEventListener('input', validListener(isValidCVV));
 
+function validationForAll() {
+    if(basicInfoValidate() && activityValidate() && cardValidate()) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
-form.addEventListener('submit', e => {
-
-    // CHECK
+function basicInfoValidate() {
+    
+    // CHECK INFO VALIDATION
     if(!name.value) {
         name.parentElement.appendChild(p);
         displayError(true, p, name);
+    } else {
+        return true;
     }
     if(!email.value) {
         email.parentElement.appendChild(p);
         displayError(true, p, email);
+    } else {
+        return true;
     }
+    return false;
+}
 
+function activityValidate() {
+    
     // ACTIVITY FORM
     let count =0;
     // COUNT ALL THE ACTIVITIES THAT ARE NOT CHECKED
@@ -290,24 +305,46 @@ form.addEventListener('submit', e => {
         p.innerText = 'At least one of activities should be checked';
         activity.style.borderColor = 'red';
         activity.appendChild(p);
+    } else {
+        return true;
     }
 
+    return false;
+}
+
+function cardValidate() {
     // CARD SECTION
     // IF CARD, ZIPCODE, OR CVV IS EMPTY OR INVALID, DISPLAY ERROR MESSAGE
     if(!card.value) {
         const p = cardErrorMessage();
         card.parentElement.appendChild(p);
         displayError(true, p, card);
+    } else {
+        return true;
     }
     if(!zipcode.value) {
         const p = cardErrorMessage();
         zipcode.parentElement.appendChild(p);
         displayError(true, p, zipcode);
+    } else {
+        return true;
     }
     if(!cvv.value) {
         const p = cardErrorMessage();
         cvv.parentElement.appendChild(p);
         displayError(true, p, cvv);
+    } else {
+        return true;
     }
-    e.preventDefault()
+    return false;
+}
+form.addEventListener('submit', e => {
+
+    basicInfoValidate();
+    activityValidate();
+    cardValidate();
+
+    if(!validationForAll()) {
+        e.preventDefault();
+    }
 })

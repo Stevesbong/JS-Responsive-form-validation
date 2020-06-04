@@ -232,6 +232,7 @@ function displayError(show, element, input) {
 
 
 // CLOSURE FUNCTION 
+// VALIDATE INPUTS AND DISPLAY ERROR
 function validListener(validator) {
     return e => {
         e.target.parentElement.appendChild(p)
@@ -256,7 +257,7 @@ function cardErrorMessage() {
     return p;
 }
 
-// VALIDATE EVENT LISTENER
+// INDIVIDUAL VALIDATE EVENT LISTENER
 name.addEventListener('input', validListener(isValidName));
 email.addEventListener('input', validListener(isValidEmail));
 card.addEventListener('input', validListener(isValidCardNumber));
@@ -271,6 +272,8 @@ function validationForAll() {
     }
 }
 
+
+// NAME AND EMAIL VALIDATE FUNCTION
 function basicInfoValidate() {
     
     // CHECK INFO VALIDATION
@@ -289,6 +292,8 @@ function basicInfoValidate() {
     return false;
 }
 
+
+// ACTIVITY VALIDATE FUNCTION
 function activityValidate() {
     
     // ACTIVITY FORM
@@ -312,6 +317,8 @@ function activityValidate() {
     return false;
 }
 
+
+// CARD NUMBER, ZIPCODE, AND CVV VALIDATE FUNCTION
 function cardValidate() {
     // CARD SECTION
     // IF CARD, ZIPCODE, OR CVV IS EMPTY OR INVALID, DISPLAY ERROR MESSAGE
@@ -338,6 +345,9 @@ function cardValidate() {
     }
     return false;
 }
+
+
+// FORM SUBMIT EVENT LISTENER
 form.addEventListener('submit', e => {
 
     basicInfoValidate();

@@ -111,7 +111,7 @@ activity.addEventListener('change', e => {
     } else {
         cost -= parseInt(currentValue.getAttribute('data-cost'));
     }
-    totalCost.innerHTML = `Total Cost: $${cost}`
+    totalCost.innerHTML = `Total Cost: $${cost}`;
 })
 
 
@@ -157,7 +157,7 @@ payment.addEventListener('change', e => {
 
 
 // FOR THE FORM VALIDATION
-const form = document.getElementById('form')
+const form = document.getElementById('form');
 const card = document.getElementById('cc-num');
 const zipcode = document.getElementById('zip');
 const cvv = document.getElementById('cvv');
@@ -186,10 +186,10 @@ const amex = new RegExp("^(3[47][0-9]{13})?$");
 const mastercard = new RegExp("^(5[1-5][0-9]{14})?$");
 const zipcodeRegex = new RegExp("^([0-9]{5}(?:-[0-9]{4})?)?$");
 const cvvRegex = new RegExp("^([0-9]{3})?$");
+
 const activities = document.querySelectorAll('input[type="checkbox"]');
 const name = document.getElementById('name');
 const email = document.getElementById('email');
-const fieldset = document.getElementsByTagName('fieldset')[0];
 
 const p = document.createElement('p');
 p.className = 'basic-info-error';
@@ -223,7 +223,7 @@ function displayError(show, element, input) {
     } else if (!input.value) {
         element.style.display = 'inherit';
         input.style.borderColor = 'red';
-        element.innerText = `${input.getAttribute('data-name')} should not be empty.`
+        element.innerText = `${input.getAttribute('data-name')} should not be empty.`;
     } else {
         element.style.display = 'none';
         input.style.borderColor = '';
@@ -239,24 +239,24 @@ function validListener(validator) {
         const valid = validator(text);
         const showTip = !valid;
         const toolTip = p;
-        console.log(showTip, 'showtip')
-        console.log(e.target, 'etarget')
         displayError(showTip, toolTip, e.target);
     }
 }
 
+// CARD ERROR MESSAGE FUNCTION
 function cardErrorMessage() {
     const cardSection = document.getElementById('credit-card');
-    const previousP = document.querySelector('#credit-card .basic-info-error')
+    const previousP = document.querySelector('#credit-card .basic-info-error');
     if(cardSection.contains(previousP)) {
-        previousP.remove()
+        previousP.remove();
     }
     const p = document.createElement('p')
-    p.className = 'basic-info-error'
-    p.style.display = 'inherit'
+    p.className = 'basic-info-error';
+    p.style.display = 'inherit';
     return p;
 }
 
+// VALIDATE EVENT LISTENER
 name.addEventListener('input', validListener(isValidName));
 email.addEventListener('input', validListener(isValidEmail));
 card.addEventListener('input', validListener(isValidCardNumber));
@@ -268,12 +268,12 @@ form.addEventListener('submit', e => {
 
     // CHECK
     if(!name.value) {
-        name.parentElement.appendChild(p)
-        displayError(true, p, name)
+        name.parentElement.appendChild(p);
+        displayError(true, p, name);
     }
     if(!email.value) {
-        email.parentElement.appendChild(p)
-        displayError(true, p, email)
+        email.parentElement.appendChild(p);
+        displayError(true, p, email);
     }
 
     // ACTIVITY FORM
@@ -281,33 +281,33 @@ form.addEventListener('submit', e => {
     // COUNT ALL THE ACTIVITIES THAT ARE NOT CHECKED
     activities.forEach( e => {
         if(!e.checked) {
-            count+=1
+            count+=1;
         }
     })
     // IF ACTIVITIES ARE NOT CHECKED, DISPLAY ERROR MESSAGE
     if(activities.length === count) {
-        const p = cardErrorMessage()
-        p.innerText = 'At least one of activities should be checked'
-        activity.style.borderColor = 'red'
+        const p = cardErrorMessage();
+        p.innerText = 'At least one of activities should be checked';
+        activity.style.borderColor = 'red';
         activity.appendChild(p);
     }
 
     // CARD SECTION
     // IF CARD, ZIPCODE, OR CVV IS EMPTY OR INVALID, DISPLAY ERROR MESSAGE
     if(!card.value) {
-        const p = cardErrorMessage()
-        card.parentElement.appendChild(p)
-        displayError(true, p, card)
+        const p = cardErrorMessage();
+        card.parentElement.appendChild(p);
+        displayError(true, p, card);
     }
     if(!zipcode.value) {
-        const p = cardErrorMessage()
-        zipcode.parentElement.appendChild(p)
-        displayError(true, p, zipcode)
+        const p = cardErrorMessage();
+        zipcode.parentElement.appendChild(p);
+        displayError(true, p, zipcode);
     }
     if(!cvv.value) {
-        const p = cardErrorMessage()
-        cvv.parentElement.appendChild(p)
-        displayError(true, p, cvv)
+        const p = cardErrorMessage();
+        cvv.parentElement.appendChild(p);
+        displayError(true, p, cvv);
     }
     e.preventDefault()
 })

@@ -67,11 +67,11 @@ design.addEventListener('change', e => {
 
 const activity = document.getElementsByClassName('activities')[0];
 // TOTAL COST FOR ACTIVITIES
-let num = 0;
+let cost = 0;
 
 // CREATE TOTAL COST "P" ELEMENT AND APPEND TO ACTIVITY
 const totalCost = document.createElement('p');
-totalCost.innerHTML = `Total Cost: $${num}`;
+totalCost.innerHTML = `Total Cost: $${cost}`;
 activity.appendChild(totalCost);
 
 // ACTIVITY EVENT LISTENER
@@ -107,11 +107,11 @@ activity.addEventListener('change', e => {
 
     // IF CURRENT CHECKBOX CHECKED, GET THE COST AND ADD TO IT
     if(currentValue.checked) {
-        num += parseInt(currentValue.getAttribute('data-cost'));
+        cost += parseInt(currentValue.getAttribute('data-cost'));
     } else {
-        num -= parseInt(currentValue.getAttribute('data-cost'));
+        cost -= parseInt(currentValue.getAttribute('data-cost'));
     }
-    totalCost.innerHTML = `Total Cost: $${num}`
+    totalCost.innerHTML = `Total Cost: $${cost}`
 })
 
 
@@ -128,7 +128,7 @@ paypalText.style.display = 'none';
 bitcoinText.style.display = 'none';
 
 // DISPLAY PAYMENT HELPER FUNCTION
-function displaySetting(credit, paypal, bitcoin) {
+function paymentDisplay(credit, paypal, bitcoin) {
     // HIDE AND SHOW CREDIT, PAYPAL, AND BITCOIN
     // DEPENDS ON THE PARAMETER
     document.getElementById('credit-card').style.display = credit;
@@ -142,15 +142,15 @@ payment.addEventListener('change', e => {
     const selectedValue = e.target.value;
     if(selectedValue === "paypal") {
 
-        displaySetting('none', 'inherit', 'none');
+        paymentDisplay('none', 'inherit', 'none');
 
     } else if(selectedValue === "bitcoin") {
 
-        displaySetting('none', 'none', 'inherit');
+        paymentDisplay('none', 'none', 'inherit');
 
     } else {
 
-        displaySetting('inherit', 'none', 'none');
+        paymentDisplay('inherit', 'none', 'none');
 
     }
 })
@@ -165,7 +165,7 @@ const expMonth = document.getElementById('exp-month');
 const expYear = document.getElementById('exp-year');
 
 
-//                  REGEX 
+//                  REGEX
 
 // ^           # Assert position at the beginning of the string.
 // [0-9]{5}    # Match a digit, exactly five times.
@@ -176,169 +176,138 @@ const expYear = document.getElementById('exp-year');
 //   ?         #   Make the group optional.
 // $           # Assert position at the end of the string.
 // MIDDLE NAME IS NOT GOING TO WORK
-const nameRegex = /^([A-Z]+)?([a-z]+)?(\s)?([A-Z]+)?([a-z]+)?$/;
-const emailRegex = /^[^@]+@[^@.]+\.[a-z]+$/i;
-const activities = document.querySelectorAll('input[type="checkbox"]');
 // 16 length
-const visa = new RegExp("^4[0-9]{12}(?:[0-9]{3})?$");
+const visa = new RegExp("^(4[0-9]{12}(?:[0-9]{3})?)?$");
 
 // 15 length
-const amex = new RegExp("^3[47][0-9]{13}$");
+const amex = new RegExp("^(3[47][0-9]{13})?$");
 
 // 16 length
-const mastercard = new RegExp("^5[1-5][0-9]{14}$");
-
-const zipcodeRegex = new RegExp("^[0-9]{5}(?:-[0-9]{4})?$");
-
-const cvvRegex = new RegExp("^[0-9]{3}$");
-
-
-//                          TEST SECTION
-
+const mastercard = new RegExp("^(5[1-5][0-9]{14})?$");
+const zipcodeRegex = new RegExp("^([0-9]{5}(?:-[0-9]{4})?)?$");
+const cvvRegex = new RegExp("^([0-9]{3})?$");
+const activities = document.querySelectorAll('input[type="checkbox"]');
 const name = document.getElementById('name');
 const email = document.getElementById('email');
-const p = document.createElement('p');
 const fieldset = document.getElementsByTagName('fieldset')[0];
-p.className = 'basic-info-error'
-p.style.display = 'none'
-fieldset.appendChild(p)
 
+const p = document.createElement('p');
+p.className = 'basic-info-error';
+
+
+// REGEX HELPER FUNCTION THAT RETURN TRUE OR FALSE
 function isValidName(name) {
     return /^([A-Z]+)?([a-z]+)?(\s)?([A-Z]+)?([a-z]+)?$/.test(name);
 }
 function isValidEmail(email) {
-    return /^[^@]+@[^@.]+\.[a-z]+$/i.test(email);
+    return /^([^@]+@[^@.]+\.[a-z]+)?$/i.test(email);
 }
+function isValidCardNumber(card) {
+    return visa.test(card) || amex.test(card) || mastercard.test(card);
+}
+function isValidZipcode(zipcode) {
+    return zipcodeRegex.test(zipcode);
+}
+function isValidCVV(cvv) {
+    return cvvRegex.test(cvv);
+}
+
+
+// DISPLAY ERROR MESSAGE TO THE PAGE
 function displayError(show, element, input) {
     if(show) {
+
         element.style.display = 'inherit';
         input.style.borderColor = 'red';
-        element.innerText = `${input.getAttribute('id')} is invalid`;
+        element.innerText = `${input.getAttribute('data-name')} is invalid`;
+    } else if (!input.value) {
+        element.style.display = 'inherit';
+        input.style.borderColor = 'red';
+        element.innerText = `${input.getAttribute('data-name')} should not be empty.`
     } else {
         element.style.display = 'none';
         input.style.borderColor = '';
     }
 }
 
+
+// CLOSURE FUNCTION 
 function validListener(validator) {
     return e => {
+        e.target.parentElement.appendChild(p)
         const text = e.target.value;
         const valid = validator(text);
-        console.log(valid, 'valid');
-        const showTip = text !== "" && !valid;
-        console.log(showTip);
+        const showTip = !valid;
         const toolTip = p;
+        console.log(showTip, 'showtip')
+        console.log(e.target, 'etarget')
         displayError(showTip, toolTip, e.target);
     }
 }
 
-name.addEventListener('input', validListener(isValidName))
-email.addEventListener('input', validListener(isValidEmail))
-// function createListener(validator) {
-//     return e => {
-//       const text = e.target.value;
-//       const valid = validator(text);
-//       const showTip = text !== "" && !valid;
-//       const tooltip = e.target.nextElementSibling;
-//       showOrHideTip(showTip, tooltip);
-//     };
-//   }
+function cardErrorMessage() {
+    const cardSection = document.getElementById('credit-card');
+    const previousP = document.querySelector('#credit-card .basic-info-error')
+    if(cardSection.contains(previousP)) {
+        previousP.remove()
+    }
+    const p = document.createElement('p')
+    p.className = 'basic-info-error'
+    p.style.display = 'inherit'
+    return p;
+}
+
+name.addEventListener('input', validListener(isValidName));
+email.addEventListener('input', validListener(isValidEmail));
+card.addEventListener('input', validListener(isValidCardNumber));
+zipcode.addEventListener('input', validListener(isValidZipcode));
+cvv.addEventListener('input', validListener(isValidCVV));
 
 
-
-//                          TEST SECTION END
-
-// NAME, EMAIL VALIDATION HELPER FUNCTION
-// function basicInfo() {
-//     const name = document.getElementById('name');
-//     const email = document.getElementById('mail');
-//     const p = document.createElement('p');
-//     const fieldset = document.getElementsByTagName('fieldset')[0];
-//     // p.style.display = 'none'
-//     p.className = 'basic-info-error'
-//     p.style.display = 'none'
-//     fieldset.appendChild(p)
-    
-
-//     name.addEventListener('input', e => {
-//         if(e.target.value === '') {
-    
-//             e.target.style.borderColor = 'red'
-//             p.style.display = 'inherit'
-//             p.innerHTML = "name cannot be empty"
-    
-//         } else {
-//             e.target.style.borderColor = ''
-//             p.style.display = ""
-//             if(!nameRegex.test(e.target.value)) {
-//                 p.style.display = 'inherit'
-//                 p.innerHTML = "name is invalid"
-//             }
-//             p.style.display = 'none'
-//         }
-//     })
-
-//     email.addEventListener('input', e => {
-//         if(email.value === '') {
-
-//             email.style.borderColor = 'red'
-//             p.style.display = 'inherit'
-//             p.innerHTML = "email cannot be empty"
-    
-//         } else {
-//             e.target.style.borderColor = ''
-//             p.style.display = ""
-//             if(!emailRegex.test(email.value)) {
-//                 email.style.borderColor = 'red'
-//                 p.style.display = 'inherit'
-//                 p.innerHTML = "email is invalid"
-//             }
-//         }
-//     })
-
-//     if(otherType.style.display !== 'none') {
-//         //get other type value
-//         console.log(otherType.value)
-//     }
-// }
-
-
-// basicInfo()
-// console.dir(activities)
 form.addEventListener('submit', e => {
-    // console.log(e.target)
-    if(design.value === "js puns" || design.value === "heart js") {
-        if(colors.value !== colors.options[0].value) {
-            console.log(colors.value)
-        }
+
+    // CHECK
+    if(!name.value) {
+        name.parentElement.appendChild(p)
+        displayError(true, p, name)
+    }
+    if(!email.value) {
+        email.parentElement.appendChild(p)
+        displayError(true, p, email)
     }
 
-    // console.log(activities.length)
+    // ACTIVITY FORM
     let count =0;
+    // COUNT ALL THE ACTIVITIES THAT ARE NOT CHECKED
     activities.forEach( e => {
         if(!e.checked) {
             count+=1
         }
     })
-    // console.log(count)
+    // IF ACTIVITIES ARE NOT CHECKED, DISPLAY ERROR MESSAGE
     if(activities.length === count) {
-        console.log('error')
-    }
-    // payment cost
-    // console.log(num)
-
-    // card number test
-    // if payment.value is not creditcard, dont do it
-    if(payment.value === payment.options[0].value) {
-        console.log('select method')
-    } else if(payment.value === 'credit card') {
-        console.log(visa.test(card.value))
-        console.log(amex.test(card.value))
-        console.log(mastercard.test(card.value))
-        console.log(zipcodeRegex.test(zipcode.value))
-        console.log(cvvRegex.test(cvv.value))
+        const p = cardErrorMessage()
+        p.innerText = 'At least one of activities should be checked'
+        activity.style.borderColor = 'red'
+        activity.appendChild(p);
     }
 
-    // console.log(payment.value, 'hi')
+    // CARD SECTION
+    // IF CARD, ZIPCODE, OR CVV IS EMPTY OR INVALID, DISPLAY ERROR MESSAGE
+    if(!card.value) {
+        const p = cardErrorMessage()
+        card.parentElement.appendChild(p)
+        displayError(true, p, card)
+    }
+    if(!zipcode.value) {
+        const p = cardErrorMessage()
+        zipcode.parentElement.appendChild(p)
+        displayError(true, p, zipcode)
+    }
+    if(!cvv.value) {
+        const p = cardErrorMessage()
+        cvv.parentElement.appendChild(p)
+        displayError(true, p, cvv)
+    }
     e.preventDefault()
 })

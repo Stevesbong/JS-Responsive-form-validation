@@ -128,36 +128,38 @@ paypalText.style.display = 'none';
 bitcoinText.style.display = 'none';
 
 // DISPLAY PAYMENT HELPER FUNCTION
-function paymentDisplay(credit, paypal, bitcoin) {
+function paymentDisplay(selected) {
     // HIDE AND SHOW CREDIT, PAYPAL, AND BITCOIN
     // DEPENDS ON THE PARAMETER
-    document.getElementById('credit-card').style.display = credit;
-    paypalText.style.display = paypal;
-    bitcoinText.style.display = bitcoin;
+    
+    if(selected === "paypal") {
+        paypalText.style.display = 'inherit';
+        bitcoinText.style.display = 'none';
+        document.getElementById('credit-card').style.display = 'none'
+    } else if(selected === "bitcoin") {
+        paypalText.style.display = 'none';
+        bitcoinText.style.display = 'inherit';
+        document.getElementById('credit-card').style.display = 'none'
+    } else {
+        paypalText.style.display = 'none';
+        bitcoinText.style.display = 'none';
+        document.getElementById('credit-card').style.display = 'inherit'
+    }
 }
 
 // PAYMENT DISPLAYING EVENT LISTENER 
 payment.addEventListener('change', e => {
 
     const selectedValue = e.target.value;
-    if(selectedValue === "paypal") {
-
-        paymentDisplay('none', 'inherit', 'none');
-
-    } else if(selectedValue === "bitcoin") {
-
-        paymentDisplay('none', 'none', 'inherit');
-
-    } else {
-
-        paymentDisplay('inherit', 'none', 'none');
-
-    }
+    paymentDisplay(selectedValue);
 })
 
 
 // FOR THE FORM VALIDATION
 const form = document.getElementById('form');
+
+const name = document.getElementById('name');
+const email = document.getElementById('email');
 const card = document.getElementById('cc-num');
 const zipcode = document.getElementById('zip');
 const cvv = document.getElementById('cvv');
@@ -188,11 +190,7 @@ const zipcodeRegex = new RegExp("^([0-9]{5}(?:-[0-9]{4})?)?$");
 const cvvRegex = new RegExp("^([0-9]{3})?$");
 
 const activities = document.querySelectorAll('input[type="checkbox"]');
-const name = document.getElementById('name');
-const email = document.getElementById('email');
 
-const p = document.createElement('p');
-p.className = 'basic-info-error';
 
 
 // REGEX HELPER FUNCTION THAT RETURN TRUE OR FALSE
@@ -216,7 +214,6 @@ function isValidCVV(cvv) {
 // DISPLAY ERROR MESSAGE TO THE PAGE
 function displayError(show, element, input) {
     if(show) {
-
         element.style.display = 'inherit';
         input.style.borderColor = 'red';
         element.innerText = `${input.getAttribute('data-name')} is invalid`;
@@ -235,6 +232,8 @@ function displayError(show, element, input) {
 // VALIDATE INPUTS AND DISPLAY ERROR
 function validListener(validator) {
     return e => {
+        console.log('validator', e.target)
+        const p = pElement(e.target)
         e.target.parentElement.appendChild(p)
         const text = e.target.value;
         const valid = validator(text);
@@ -244,18 +243,31 @@ function validListener(validator) {
     }
 }
 
-// CARD ERROR MESSAGE FUNCTION
-function cardErrorMessage() {
-    const cardSection = document.getElementById('credit-card');
-    const previousP = document.querySelector('#credit-card .basic-info-error');
-    if(cardSection.contains(previousP)) {
-        previousP.remove();
+function pElement(element){
+    // console.log('pelement', document.querySelector('.basic-info-error'))
+    // console.log('pelement22', element)
+    const errorMessageP = document.querySelector('.basic-info-error')
+    console.log('parent parent', element)
+    console.log('sibling',element.parentElement.previousElementSibling)
+    if(element.parentElement.contains(errorMessageP)) {
+        document.querySelector('.basic-info-error').remove()
     }
-    const p = document.createElement('p')
+    
+    // // NEED WORK
+    // else if(element.parentElement.parentElement === document.getElementById('credit-card')) {
+    //     if(element.parentElement.previousElementSibling) {
+    //         console.log(element.parentElement.previousElementSibling.children[2])
+    //         if(element.parentElement.previousElementSibling.children[2] === document.querySelector('p.basic-info-error')) {
+    //             console.log('yes')
+    //             document.querySelector('p.basic-info-error').remove()
+    //         }
+    //     }
+    // }
+    const p = document.createElement('p');
     p.className = 'basic-info-error';
-    p.style.display = 'inherit';
     return p;
 }
+
 
 // INDIVIDUAL VALIDATE EVENT LISTENER
 name.addEventListener('input', validListener(isValidName));
@@ -278,12 +290,14 @@ function basicInfoValidate() {
     
     // CHECK INFO VALIDATION
     if(!name.value) {
+        const p = pElement(name)
         name.parentElement.appendChild(p);
         displayError(true, p, name);
     } else {
         return true;
     }
     if(!email.value) {
+        const p = pElement(email)
         email.parentElement.appendChild(p);
         displayError(true, p, email);
     } else {
@@ -306,10 +320,9 @@ function activityValidate() {
     })
     // IF ACTIVITIES ARE NOT CHECKED, DISPLAY ERROR MESSAGE
     if(activities.length === count) {
-        const p = cardErrorMessage();
-        p.innerText = 'At least one of activities should be checked';
-        activity.style.borderColor = 'red';
+        const p = pElement(activity.children[0]);
         activity.appendChild(p);
+        displayError(true, p, activity);
     } else {
         return true;
     }
@@ -323,22 +336,22 @@ function cardValidate() {
     // CARD SECTION
     // IF CARD, ZIPCODE, OR CVV IS EMPTY OR INVALID, DISPLAY ERROR MESSAGE
     if(!card.value) {
-        const p = cardErrorMessage();
-        card.parentElement.appendChild(p);
+        const p = pElement(card);
+        card.parentElement.parentElement.appendChild(p);
         displayError(true, p, card);
     } else {
         return true;
     }
     if(!zipcode.value) {
-        const p = cardErrorMessage();
-        zipcode.parentElement.appendChild(p);
+        const p = pElement(zipcode);
+        zipcode.parentElement.parentElement.appendChild(p);
         displayError(true, p, zipcode);
     } else {
         return true;
     }
     if(!cvv.value) {
-        const p = cardErrorMessage();
-        cvv.parentElement.appendChild(p);
+        const p = pElement(cvv);
+        cvv.parentElement.parentElement.appendChild(p);
         displayError(true, p, cvv);
     } else {
         return true;

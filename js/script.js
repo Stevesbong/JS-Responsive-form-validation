@@ -233,7 +233,7 @@ function displayError(show, element, input) {
 function validListener(validator) {
     return e => {
         console.log('validator', e.target)
-        const p = pElement(e.target)
+        const p = errorMessageElement(e.target)
         e.target.parentElement.appendChild(p)
         const text = e.target.value;
         const valid = validator(text);
@@ -243,9 +243,9 @@ function validListener(validator) {
     }
 }
 
-function pElement(element){
-    // console.log('pelement', document.querySelector('.basic-info-error'))
-    // console.log('pelement22', element)
+function errorMessageElement(element){
+    // console.log('errorMessageElement', document.querySelector('.basic-info-error'))
+    // console.log('errorMessageElement22', element)
     const errorMessageP = document.querySelector('.basic-info-error')
     console.log('parent parent', element)
     console.log('sibling',element.parentElement.previousElementSibling)
@@ -290,14 +290,14 @@ function basicInfoValidate() {
     
     // CHECK INFO VALIDATION
     if(!name.value) {
-        const p = pElement(name)
+        const p = errorMessageElement(name)
         name.parentElement.appendChild(p);
         displayError(true, p, name);
     } else {
         return true;
     }
     if(!email.value) {
-        const p = pElement(email)
+        const p = errorMessageElement(email)
         email.parentElement.appendChild(p);
         displayError(true, p, email);
     } else {
@@ -320,7 +320,7 @@ function activityValidate() {
     })
     // IF ACTIVITIES ARE NOT CHECKED, DISPLAY ERROR MESSAGE
     if(activities.length === count) {
-        const p = pElement(activity.children[0]);
+        const p = errorMessageElement(activity.children[0]);
         activity.appendChild(p);
         displayError(true, p, activity);
     } else {
@@ -336,21 +336,21 @@ function cardValidate() {
     // CARD SECTION
     // IF CARD, ZIPCODE, OR CVV IS EMPTY OR INVALID, DISPLAY ERROR MESSAGE
     if(!card.value) {
-        const p = pElement(card);
+        const p = errorMessageElement(card);
         card.parentElement.parentElement.appendChild(p);
         displayError(true, p, card);
     } else {
         return true;
     }
     if(!zipcode.value) {
-        const p = pElement(zipcode);
+        const p = errorMessageElement(zipcode);
         zipcode.parentElement.parentElement.appendChild(p);
         displayError(true, p, zipcode);
     } else {
         return true;
     }
     if(!cvv.value) {
-        const p = pElement(cvv);
+        const p = errorMessageElement(cvv);
         cvv.parentElement.parentElement.appendChild(p);
         displayError(true, p, cvv);
     } else {
